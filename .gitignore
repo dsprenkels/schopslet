@@ -1,0 +1,13 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# C extensions
+*.so
+
+# Sphinx documentation
+docs/_build/
+
+# Application-specific
+/conf.py
+/schopslet.db
