@@ -93,9 +93,21 @@ def csv_read(debtors_database):
     fh = open(CONFIG['debtors_file'])
     reader = csv.reader(fh)
 
+    lineno = 0
     for line in reader:
+        lineno += 1
         csv_record = dict(zip(
             ['name', 'email', 'description', 'amount'], line))
+        if (not re.match(r'\b[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}\b',
+                csv_record['email'], re.IGNORECASE)):
+            if lineno == 1:
+                logging.info("first line in CSV-file does not contain a valid "
+                    "email adress (but contains '%s'), assuming file header" % csv_record['email'])
+            else:
+                logging.warning("line %(lineno)d in CSV-file does not contain "
+                    "a valid email adress (but contains '%(email)s'), ignoring line" %
+                    {'lineno': lineno, 'email': csv_record['email']})
+            continue
         cur.execute('''INSERT OR IGNORE INTO debtors VALUES (?, ?)''',
             (csv_record['email'], csv_record['name']))
         cur.execute('''INSERT INTO debts VALUES (?, ?, ?)''',
