@@ -4,7 +4,7 @@
 Put you main configuration here and rename the file to `conf.py`.
 """
 
-# `EMAIL TEMPLATE `is the email that must be filled with your own custom text
+# `EMAIL TEMPLATE` is the email that must be filled with your own custom text
 # %(debt_lines)s will be filled with a list of debts for this user, each on
 # its own line. The items on this list will be composed by `DEBT_LINE`.
 EMAIL_TEMPLATE = u'''
@@ -20,6 +20,9 @@ Kind regards,
 
 Bob
 '''.strip()
+
+# `EMAIL_SUBJECT` contains the subject of the mail to be sent.
+EMAIL_SUBJECT = u'Debt notice'
 
 # `DEBT_LINE` defines the format of each debt listed in the email. You can
 # use the variables `amount` and `description` to format the string. By

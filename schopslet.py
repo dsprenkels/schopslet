@@ -22,6 +22,8 @@ It is originally intended for automating the sending e-mails to debtors, but
 can be used for any purpose.
 """
 
+DEFAULT_CONFIG_FILE = u'conf.py'
+
 def prompt(prompt, func=raw_input):
     """
     Prompt the user for input.
@@ -56,7 +58,7 @@ def write_email(debtors_database):
         msg = MIMENonMultipart('text', 'plain')
         msg['To'] = to_addr
         msg['From'] = CONFIG['from_addr']
-        msg['Subject'] = u'Debiteur van Karpe Noktem'
+        msg['Subject'] = CONFIG['email_subject']
         msg.set_payload(payload, charset=charset)        
     
         queue.append(msg)
@@ -116,8 +118,8 @@ def verify_send(msg):
     """
 
     print u"\n"
-    print (u"Sending from %(sender)s to %(recipient)s:\n\n%(payload)s\n" % 
-        {'sender': msg['From'], 'recipient': msg['To'], 'payload': msg.get_payload()})
+    print (u"Sending from %(sender)s to %(recipient)s;\nSubject: %(subject)s\n\n%(payload)s\n" % 
+        {'sender': msg['From'], 'recipient': msg['To'], 'subject': msg['Subject'], 'payload': msg.get_payload()})
     if CONFIG['yes_to_all']:
         response = 'yes'
     else:
@@ -157,6 +159,8 @@ if __name__ == '__main__':
     # configure ArgumentParser
     parser = ArgumentParser(
         description=u'Send automated emails.')
+    parser.add_argument('--config', metavar='FILE', dest='config_file',
+        help=u'specify a config file (default: %s)' % DEFAULT_CONFIG_FILE, default=DEFAULT_CONFIG_FILE)
     parser.add_argument('--host', '-H', metavar='HOST', dest='smtp_host', help=u'SMTP host')
     parser.add_argument('--user', '-u', metavar='USER', dest='smtp_username', help=u'SMTP username')
     parser.add_argument('--password', '-p', metavar='PASSWORD', dest='smtp_password', help=u"SMTP password (will be prompted if not provided)")
@@ -182,13 +186,15 @@ if __name__ == '__main__':
     atexit.register(logging.shutdown)
 
     # load config
-    CONFIG = {}
-    import conf
-    conf_contents = dir(conf)
+    config_file = os.path.splitext(args.config_file)[0]
+    logging.debug(config_file)
+    config_module = __import__(config_file)
+    conf_contents = dir(config_module)
 
+    CONFIG = {}
     for variable in conf_contents:
         if re.match('^[A-Z_]+$', variable):
-            CONFIG[variable.lower()] = getattr(conf, variable)
+            CONFIG[variable.lower()] = getattr(config_module, variable)
 
     # override the configuration if a command line argument is given
     CONFIG['debtors_file'] = args.debtors_file
