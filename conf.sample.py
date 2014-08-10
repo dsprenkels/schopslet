@@ -18,7 +18,7 @@ NL12 ABCD 3456 7890 12
 
 Kind regards,
 
-Bob
+Chris
 '''.strip()
 
 # `EMAIL_SUBJECT` contains the subject of the mail to be sent.
