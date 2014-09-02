@@ -51,9 +51,10 @@ def write_email(debtors_database):
             WHERE debtor_email=?''', (debtor[0], ))
         rows = cur.fetchall()
         debt_lines = [CONFIG['debt_line'] %
-            {'amount': row[0], 'description': row[1]} for row in rows]
+            {'amount': float(row[0]), 'description': row[1]} for row in rows]
+        total = sum([float(row[0]) for row in rows])
 
-        payload = CONFIG['email_template'] % {'name': name, 'debt_lines': u'\n'.join(debt_lines)}
+        payload = CONFIG['email_template'] % {'name': name, 'debt_lines': u'\n'.join(debt_lines), 'total': total}
 
         msg = MIMENonMultipart('text', 'plain')
         msg['To'] = to_addr
@@ -77,7 +78,16 @@ def csv_read(debtors_database):
     for line in reader:
         lineno += 1
         csv_record = dict(zip(
-            ['name', 'email', 'description', 'amount'], line))
+            ['use_row', 'name', 'email', 'description', 'amount'], line))
+        
+        if csv_record['use_row'].lower() in ['1', 'y', 'yes', 'true', 'on']:
+            pass
+        elif csv_record['use_row'].lower() in ['0', 'n', 'no', 'false', 'off']:
+            continue
+        else:
+            logging.warning("I don't understand '%s' on row %d; ignoring row." % (csv_record['use_row'], lineno))
+            continue
+
         if (not re.match(r'\b[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}\b',
                 csv_record['email'], re.IGNORECASE)):
             if lineno == 1:
@@ -120,6 +130,7 @@ def verify_send(msg):
     print u"\n"
     print (u"Sending from %(sender)s to %(recipient)s;\nSubject: %(subject)s\n\n%(payload)s\n" % 
         {'sender': msg['From'], 'recipient': msg['To'], 'subject': msg['Subject'], 'payload': msg.get_payload()})
+    
     if CONFIG['yes_to_all']:
         response = 'yes'
     else:
