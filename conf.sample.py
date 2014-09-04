@@ -34,6 +34,7 @@ DEBT_LINE = u'   - €%(amount)s for %(description)s'
 # using command line arguments. Unknown variables will be prompted if they
 # are not provdided. Setting your password here is NOT recommended!
 #SMTP_HOST = 'stmp.example.com'
+#SMTP_PORT = 25
 #SMTP_USERNAME = 'fluffyunicorn2000'
 #SMTP_PASSWORD = 'mySecr3t'
 #FROM_ADDR = 'fluffyunicorm2000@example.com'

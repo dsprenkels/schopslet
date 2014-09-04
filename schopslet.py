@@ -11,7 +11,7 @@ from getpass import getpass
 import logging
 import os
 import re
-from smtplib import SMTP
+import smtplib
 import sys
 
 import sqlite3
@@ -78,16 +78,13 @@ def csv_read(debtors_database):
     for line in reader:
         lineno += 1
         csv_record = dict(zip(
-            ['use_row', 'name', 'email', 'description', 'amount'], line))
+            ['use_line', 'name', 'email', 'description', 'amount'], line))
         
-        if csv_record['use_row'].lower() in ['1', 'y', 'yes', 'true', 'on']:
-            pass
-        elif csv_record['use_row'].lower() in ['0', 'n', 'no', 'false', 'off']:
-            continue
-        else:
-            logging.warning("I don't understand '%s' on row %d; ignoring row." % (csv_record['use_row'], lineno))
-            continue
+        for k in csv_record:
+            csv_record[k] = unicode(csv_record[k], "utf-8", "ignore")
 
+        if not csv_record['use_line'] == u'1':
+            continue
         if (not re.match(r'\b[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}\b',
                 csv_record['email'], re.IGNORECASE)):
             if lineno == 1:
@@ -152,7 +149,7 @@ def send_emails(queue):
     """
 
     try:
-        connection = SMTP(CONFIG['smtp_host'])
+        connection = smtplib.SMTP(CONFIG['smtp_host'], CONFIG['smtp_port'])
         if CONFIG['verbosity'] >= 2:
             connection.set_debuglevel(True)
         if CONFIG['use_tls']:
@@ -161,6 +158,9 @@ def send_emails(queue):
         for msg in queue:
             if verify_send(msg):
                 connection.sendmail(msg['From'], msg['To'].split(', '), msg.as_string())
+    except smtplib.SMTPException, e:
+        logging.error(" %s" % e.message)
+        sys.exit(1)
     except EnvironmentError, e:
         logging.error("connection error: '%s'" % e.strerror)
         sys.exit(e.errno)
@@ -173,6 +173,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', metavar='FILE', dest='config_file',
         help=u'specify a config file (default: %s)' % DEFAULT_CONFIG_FILE, default=DEFAULT_CONFIG_FILE)
     parser.add_argument('--host', '-H', metavar='HOST', dest='smtp_host', help=u'SMTP host')
+    parser.add_argument('--port', metavar='NUMBER', dest='smtp_port', help=u'SMTP port')
     parser.add_argument('--user', '-u', metavar='USER', dest='smtp_username', help=u'SMTP username')
     parser.add_argument('--password', '-p', metavar='PASSWORD', dest='smtp_password', help=u"SMTP password (will be prompted if not provided)")
     parser.add_argument('--from', metavar='FROM', dest='from_addr', help=u"the sender address")
@@ -183,7 +184,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # initialise logging
-    if args.verbose == 0:
+    if not args.verbose:
         LOGGING_LEVEL = logging.WARN
     elif args.verbose == 1:
         LOGGING_LEVEL = logging.INFO
@@ -210,6 +211,7 @@ if __name__ == '__main__':
     # override the configuration if a command line argument is given
     CONFIG['debtors_file'] = args.debtors_file
     CONFIG['smtp_host'] = args.smtp_host or CONFIG.get('smtp_host', None)
+    CONFIG['smtp_port'] = args.smtp_port or CONFIG.get('smtp_port', 25)
     CONFIG['smtp_username'] = args.smtp_username or CONFIG.get('smtp_username', None)
     CONFIG['smtp_password'] = args.smtp_password or CONFIG.get('smtp_password', None)
     CONFIG['use_tls'] = False if args.no_tls else True
