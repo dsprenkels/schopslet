@@ -173,7 +173,7 @@ if __name__ == '__main__':
     parser.add_argument('--config', metavar='FILE', dest='config_file',
         help=u'specify a config file (default: %s)' % DEFAULT_CONFIG_FILE, default=DEFAULT_CONFIG_FILE)
     parser.add_argument('--host', '-H', metavar='HOST', dest='smtp_host', help=u'SMTP host')
-    parser.add_argument('--port', metavar='NUMBER', dest='smtp_port', help=u'SMTP port')
+    parser.add_argument('--port', metavar='PORT', dest='smtp_port', help=u'SMTP port')
     parser.add_argument('--user', '-u', metavar='USER', dest='smtp_username', help=u'SMTP username')
     parser.add_argument('--password', '-p', metavar='PASSWORD', dest='smtp_password', help=u"SMTP password (will be prompted if not provided)")
     parser.add_argument('--from', metavar='FROM', dest='from_addr', help=u"the sender address")
