@@ -68,7 +68,7 @@ def write_email(debtors_database):
 def csv_read(debtors_database):
     """
     `csv_read` reads the CSV file provided in `CONFIG['debtors_file]` and
-    inserts eacht record into `debtors_database`.
+    inserts each record into `debtors_database`.
     """
     cur = debtors_database.cursor()
     fh = open(CONFIG['debtors_file'])
