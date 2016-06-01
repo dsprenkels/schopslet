@@ -11,7 +11,7 @@ file as `conf.py`.
 Then create a CSV file with 5 columns. Each row will contain the information
 to one debt. The columns 1 to 5 represent
 
-1.  the "use"-flag, set to `1` or `0` to tell schopslet to use this row or not to;
+1.  the "use"-flag, set to `1` or `0` to tell schopslet to use this row or not;
 2.  the debtor's name (used in the salutation);
 3.  the debtor's email address;
 4.  the description of the debt;
