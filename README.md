@@ -27,7 +27,7 @@ use | name          | email             | description          | amount |
 
 If the file's name is `debtors.csv`, run `python schopslet.py debtors.csv`
 to send Alice and Bob their emails. You will be prompted for your SMTP
-credentials. Alternatively, you can provide this information by supplying
+credentials. Alternatively, you can provide these by supplying
 them as command line arguments or defining them in `conf.py`.
 
 Have a nice day!
