@@ -70,6 +70,7 @@ def csv_read(debtors_database):
     `csv_read` reads the CSV file provided in `CONFIG['debtors_file]` and
     inserts each record into `debtors_database`.
     """
+    record_keys = ['use_line', 'name', 'email', 'description', 'amount']
     cur = debtors_database.cursor()
     fh = open(CONFIG['debtors_file'])
     reader = csv.reader(fh)
@@ -77,14 +78,28 @@ def csv_read(debtors_database):
     lineno = 0
     for line in reader:
         lineno += 1
-        csv_record = dict(zip(
-            ['use_line', 'name', 'email', 'description', 'amount'], line))
-        
+        csv_record = dict(zip(record_keys, line))
+
         for k in csv_record:
             csv_record[k] = unicode(csv_record[k], "utf-8", "ignore")
 
-        if not csv_record['use_line'] == u'1':
+        # If the line does not have 5 columns, skip and print warning
+        if len(csv_record) != len(record_keys):
+            logging.warn("Skipping line %d, it does not contain %d values" %
+                         (lineno, len(record_keys)))
             continue
+
+        # The user explicitly specified to skip this line
+        if csv_record['use_line'] == u'1':
+            pass
+        elif csv_record['use_line'] == u'' or csv_record['use_line'] == u'0':
+            # Skip record
+            continue
+        else:
+            logging.warn("Skipping input line %d: expected '1' or '0' in the `use` "
+                         "column (found '%s')" % (lineno, csv_record['use_line']))
+            continue
+
         if (not re.match(r'\b[A-Z0-9._%+-]+@(?:[A-Z0-9-]+\.)+[A-Z]{2,4}\b',
                 csv_record['email'], re.IGNORECASE)):
             if lineno == 1:
