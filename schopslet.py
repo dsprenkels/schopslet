@@ -60,11 +60,11 @@ def write_email(debtors_database):
         msg['To'] = to_addr
         msg['From'] = CONFIG['from_addr']
         msg['Subject'] = CONFIG['email_subject']
-        msg.set_payload(payload, charset=charset)        
-    
+        msg.set_payload(payload, charset=charset)
+
         queue.append(msg)
     return queue
- 
+
 def csv_read(debtors_database):
     """
     `csv_read` reads the CSV file provided in `CONFIG['debtors_file]` and
@@ -140,9 +140,9 @@ def verify_send(msg):
     """
 
     print u"\n"
-    print (u"Sending from %(sender)s to %(recipient)s;\nSubject: %(subject)s\n\n%(payload)s\n" % 
+    print (u"Sending from %(sender)s to %(recipient)s;\nSubject: %(subject)s\n\n%(payload)s\n" %
         {'sender': msg['From'], 'recipient': msg['To'], 'subject': msg['Subject'], 'payload': msg.get_payload()})
-    
+
     if CONFIG['yes_to_all']:
         response = 'yes'
     else:
@@ -208,7 +208,7 @@ if __name__ == '__main__':
     logging.basicConfig(format='%(levelname)s:%(message)s',
         level=LOGGING_LEVEL)
     logging.debug('Showing debug messages')
-    
+
     # make sure the logger quits on exit
     atexit.register(logging.shutdown)
 

@@ -33,7 +33,7 @@ DEBT_LINE = u'   - €%(amount)s for %(description)s'
 
 # These variables can be filled with default values. They can be overridden
 # using command line arguments. Unknown variables will be prompted if they
-# are not provdided. Setting your password here is NOT recommended!
+# are not provided. Setting your password here is NOT recommended!
 #SMTP_HOST = 'stmp.example.com'
 #SMTP_PORT = 25
 #SMTP_USERNAME = 'fluffyunicorn2000'
