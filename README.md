@@ -17,7 +17,8 @@ to one debt. The columns 1 to 5 represent
 4.  the description of the debt;
 5.  and the amount of money owed for this debt.
 
-An example of this file may look like this:
+An example of this file may look like this (note that the script _expects_
+the first line to contain column headers):
 
 use | name          | email             | description          | amount |
 ---:| ------------- | ----------------- | -------------------- | ------:|
