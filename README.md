@@ -11,7 +11,7 @@ file as `conf.py`.
 Then create a CSV file with 5 columns. Each row will contain the information
 to one debt. The columns 1 to 5 represent
 
-1.  the "use"-flag, set to `1` or `0` to tell schopslet to use this row or not to;
+1.  the "use"-flag, set to `1` or `0` to tell schopslet to use this row or not;
 2.  the debtor's name (used in the salutation);
 3.  the debtor's email address;
 4.  the description of the debt;
@@ -27,7 +27,7 @@ use | name          | email             | description          | amount |
 
 If the file's name is `debtors.csv`, run `python schopslet.py debtors.csv`
 to send Alice and Bob their emails. You will be prompted for your SMTP
-credentials. Alternatively, you can provide this information by supplying
+credentials. Alternatively, you can provide these by supplying
 them as command line arguments or defining them in `conf.py`.
 
 Have a nice day!
